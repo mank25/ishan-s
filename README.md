@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eventiify
 
-## Getting Started
+The Eventiify marketing site — built with Next.js and a Sanity Studio CMS embedded
+at `/studio` for managing blog posts, testimonials, the photo gallery, services, and
+site settings.
 
-First, run the development server:
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Until Sanity is connected (see
+below), every CMS-backed section — services, testimonials, gallery, journal — renders
+sensible placeholder content instead of breaking, so the site always looks finished.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Connecting the CMS (Sanity)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The Studio code is already built (`sanity.config.ts`, schemas in
+`src/sanity/schemaTypes/`). You just need a free Sanity project:
 
-## Learn More
+1. **Create a Sanity account and project.** In the terminal:
+   ```bash
+   npx sanity login
+   npx sanity init --env
+   ```
+   Choose "Create new project," name it "Eventiify," and pick the `production`
+   dataset. When it asks to output config, let it write `.env.local` for you (or
+   copy `.env.local.example` to `.env.local` and fill in the values it prints).
 
-To learn more about Next.js, take a look at the following resources:
+2. **Restart the dev server** (`npm run dev`) so the new env vars load.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Open the Studio** at [http://localhost:3000/studio](http://localhost:3000/studio)
+   and sign in with the same Sanity account. You'll see five content types:
+   - **Blog Post** — title, cover image, category, body (rich text + images)
+   - **Testimonial** — client name, quote, event type, rating, "featured" toggle
+     for which ones show on the homepage
+   - **Gallery Image** — photo, category (Weddings / Corporate / Catering & Décor /
+     Birthdays & Socials), display order
+   - **Service** — the four service cards on the homepage
+   - **Site Settings** — phone, email, address, social links
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Deploy the Studio** so it's reachable without running the dev server locally:
+   ```bash
+   npx sanity deploy
+   ```
+   This gives you a hosted editor at `https://eventiify.sanity.studio` in addition
+   to the one embedded in the site at `/studio` — use whichever is more convenient.
 
-## Deploy on Vercel
+Content added in the Studio appears on the live site automatically (pages revalidate
+every 60 seconds) — no redeploy needed for content changes.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deploying the site
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Push this repo to GitHub and import it on [Vercel](https://vercel.com/new). Add the
+same three env vars from `.env.local` in the Vercel project settings
+(`NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`,
+`NEXT_PUBLIC_SANITY_API_VERSION`), then deploy.
+
+## Brand
+
+- **Colors**: deep ledger green (`--color-ink`), gold leaf (`--color-gold`), warm
+  parchment (`--color-parchment`), ember rust (`--color-rust`) — all defined in
+  `src/app/globals.css`.
+- **Type**: Fraunces (display), Inter (body), Space Grotesk (labels/eyebrows) —
+  loaded in `src/app/layout.tsx`.
+- **Logo**: `public/brand/eventiify-logo.jpeg`. The circular "seal" mark used in the
+  hero, footer, and contact page is a hand-built SVG component
+  (`src/components/Seal.tsx`), not an image, so it stays crisp at any size.

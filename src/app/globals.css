@@ -1,26 +1,96 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette — drawn from the Eventiify seal: deep ledger green + gold leaf */
+  --color-ink: #0f2c27;         /* primary dark green — headers, footer, hero */
+  --color-ink-deep: #0a201c;    /* darker shade for depth/gradients */
+  --color-gold: #c9a13b;        /* gold leaf — accents on dark backgrounds */
+  --color-gold-bright: #e0bd5c; /* brighter gold for hover/highlight states */
+  --color-parchment: #f7f2e6;   /* warm cream — main light background */
+  --color-parchment-deep: #efe6d2; /* slightly deeper cream for section banding */
+  --color-rust: #b5502c;        /* ember/terracotta — CTA accent, festive warmth */
+  --color-charcoal: #211f1a;    /* body text on parchment */
+  --color-hairline: #d9cfb3;    /* dividers on parchment */
+  --color-hairline-dark: #2c443d; /* dividers on ink */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-ink: var(--color-ink);
+  --color-ink-deep: var(--color-ink-deep);
+  --color-gold: var(--color-gold);
+  --color-gold-bright: var(--color-gold-bright);
+  --color-parchment: var(--color-parchment);
+  --color-parchment-deep: var(--color-parchment-deep);
+  --color-rust: var(--color-rust);
+  --color-charcoal: var(--color-charcoal);
+  --color-hairline: var(--color-hairline);
+  --color-hairline-dark: var(--color-hairline-dark);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-inter);
+  --font-utility: var(--font-space-grotesk);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-parchment);
+  color: var(--color-charcoal);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* Ledger rule — the recurring double-line divider motif used across sections */
+.ledger-rule {
+  position: relative;
+  height: 5px;
+}
+.ledger-rule::before,
+.ledger-rule::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+}
+.ledger-rule::before {
+  top: 0;
+  background: currentColor;
+  opacity: 0.55;
+}
+.ledger-rule::after {
+  top: 4px;
+  background: currentColor;
+  opacity: 0.2;
+}
+
+/* Page-enter — the cross-fade used by template.tsx on every route change */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-page-enter {
+  animation: page-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
