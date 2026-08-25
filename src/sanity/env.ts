@@ -12,7 +12,10 @@ export const projectId = assertValue(
 );
 
 function assertValue<T>(v: T | undefined, errorMessage: string): T {
-  if (v === undefined) {
+  // An unset GitHub Actions secret arrives as "" rather than undefined, so an
+  // empty or blank value has to count as missing too — otherwise createClient
+  // gets projectId: "" and throws during the static export.
+  if (v === undefined || v === null || (typeof v === "string" && v.trim() === "")) {
     // Falls back to a placeholder so the app still boots (with CMS-backed
     // sections rendering their fallback content) before real Sanity
     // credentials are configured in the environment.

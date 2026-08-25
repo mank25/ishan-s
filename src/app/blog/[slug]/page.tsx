@@ -22,6 +22,10 @@ const portableTextComponents: PortableTextComponents = {
 
 export async function generateStaticParams() {
   const posts = await getAllPosts();
+  // `output: export` refuses to emit a dynamic route with zero params, so a
+  // CMS that is unreachable (or not configured yet) would otherwise fail the
+  // whole build. Fall back to one stub path, which renders the not-found page.
+  if (posts.length === 0) return [{ slug: "not-found" }];
   return posts.map((post) => ({ slug: post.slug }));
 }
 
