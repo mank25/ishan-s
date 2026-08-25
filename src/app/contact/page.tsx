@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Seal from "@/components/Seal";
+import Crest from "@/components/Crest";
 
 export const metadata: Metadata = {
   title: "Contact - Eventiify",
@@ -29,7 +29,7 @@ export default function ContactPage() {
         <section className="py-20">
           <div className="mx-auto grid max-w-6xl gap-16 px-6 md:grid-cols-[1fr_1.2fr] md:px-10">
             <div>
-              <Seal className="h-24 w-24 text-rust" spin={false} />
+              <Crest tone="ink" className="h-16 w-auto" />
               <dl className="mt-8 space-y-6 font-body text-sm">
                 <div>
                   <dt className="font-utility text-[11px] uppercase tracking-[0.16em] text-rust">

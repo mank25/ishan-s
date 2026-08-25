@@ -1,27 +1,48 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { site } from "@/lib/site";
 
+/**
+ * The site is a static export, so there is no server to post to. Rather than
+ * swallow an address and pretend, the form hands the visitor off to their mail
+ * client with everything pre-filled. Swap this for a provider endpoint when one
+ * exists.
+ */
 export default function Newsletter() {
-  const [status, setStatus] = useState<"idle" | "done">("idle");
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("done");
-  }
+    const subject = encodeURIComponent("Add me to the Eventiify list");
+    const body = encodeURIComponent(
+      `Please add ${email} to the Eventiify planning-notes list.`
+    );
+    window.location.href = `mailto:${site.email}?subject=${subject}&body=${body}`;
+    setSent(true);
+  };
 
   return (
-    <section className="bg-parchment-deep py-16 text-charcoal">
-      <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 px-6 md:flex-row md:items-center md:justify-between md:px-10">
+    <section id="newsletter" className="bg-sand px-5 py-16 md:px-10 md:py-20">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-10 text-center lg:flex-row lg:justify-between lg:text-left">
         <div>
-          <h2 className="font-display text-2xl text-ink sm:text-3xl">Get on the guest list.</h2>
-          <p className="mt-2 max-w-md font-body text-sm text-charcoal/75">
-            Season planning tips and real weddings from the journal - no more than twice a month.
-          </p>
+          <p className="script text-[clamp(2rem,4.4vw,3rem)] text-brass">Get on the list</p>
+          <h2 className="headline mt-1 max-w-md text-[clamp(1.3rem,2.6vw,1.9rem)] text-ink">
+            Stay in the know about new offerings and planning notes
+          </h2>
         </div>
 
-        {status === "idle" ? (
-          <form onSubmit={handleSubmit} className="flex w-full max-w-md gap-3">
+        {sent ? (
+          <p className="max-w-sm text-[0.9rem] leading-[1.8] text-charcoal/75">
+            Your mail app should be opening with the message ready — hit send and
+            you&rsquo;re on the list.
+          </p>
+        ) : (
+          <form
+            onSubmit={submit}
+            className="flex w-full max-w-md flex-col gap-3 sm:flex-row sm:items-center"
+          >
             <label htmlFor="newsletter-email" className="sr-only">
               Email address
             </label>
@@ -29,18 +50,15 @@ export default function Newsletter() {
               id="newsletter-email"
               type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full rounded-full border border-hairline bg-parchment px-5 py-3 font-body text-sm text-charcoal placeholder:text-charcoal/50 focus:border-ink focus:outline-none"
+              className="min-w-0 flex-1 rounded-full border border-hairline bg-parchment px-6 py-3.5 text-[0.9rem] text-charcoal placeholder:text-charcoal/40 focus:border-gold focus:outline-none"
             />
-            <button
-              type="submit"
-              className="shrink-0 rounded-full bg-ink px-6 py-3 font-utility text-xs uppercase tracking-[0.18em] text-parchment transition-colors hover:bg-ink-deep"
-            >
-              Sign Up
+            <button type="submit" className="btn btn-gold shrink-0">
+              Sign up
             </button>
           </form>
-        ) : (
-          <p className="font-display italic text-lg text-ink">You&rsquo;re on the list - welcome.</p>
         )}
       </div>
     </section>

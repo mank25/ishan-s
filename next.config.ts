@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "cdn.sanity.io" },
+      // Stock placeholder photography — see src/lib/media.ts
+      { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
   basePath: isGithubActions ? `/${repoName}` : "",

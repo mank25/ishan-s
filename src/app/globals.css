@@ -1,41 +1,74 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ==========================================================================
+   Eventiify — deep-green + gold-leaf palette, drawn straight from the seal.
+   The page is a warm parchment "card" floating on a forest-green ground, the
+   way the reference layout floats its content inside a coloured frame.
+   ========================================================================== */
+
 :root {
-  /* Brand palette — drawn from the Eventiify seal: deep ledger green + gold leaf */
-  --color-ink: #0f2c27;         /* primary dark green — headers, footer, hero */
-  --color-ink-deep: #0a201c;    /* darker shade for depth/gradients */
-  --color-gold: #c9a13b;        /* gold leaf — accents on dark backgrounds */
-  --color-gold-bright: #e0bd5c; /* brighter gold for hover/highlight states */
-  --color-parchment: #f7f2e6;   /* warm cream — main light background */
-  --color-parchment-deep: #efe6d2; /* slightly deeper cream for section banding */
-  --color-rust: #b5502c;        /* ember/terracotta — CTA accent, festive warmth */
-  --color-charcoal: #211f1a;    /* body text on parchment */
-  --color-hairline: #d9cfb3;    /* dividers on parchment */
-  --color-hairline-dark: #2c443d; /* dividers on ink */
+  /* Greens */
+  --color-ink: #0e2a24;          /* forest green — page ground, dark bands */
+  --color-ink-deep: #07160f;     /* deepest green — bottom bar, overlays */
+  --color-ink-soft: #16463a;     /* raised green — cards and chips on dark */
+  --color-hairline-dark: #2a5648;
+
+  /* Gold leaf */
+  --color-gold: #c9a13b;         /* the seal's gold — accents on dark */
+  --color-gold-bright: #e8c86e;  /* highlight gold — hovers, hairlines on dark */
+  --color-brass: #a07c24;        /* gold that passes contrast as large text on cream */
+  --color-brass-deep: #7a5c16;   /* gold dark enough for small labels on cream */
+
+  /* Warm neutrals */
+  --color-parchment: #fbf7ec;    /* main cream page surface */
+  --color-parchment-deep: #f4ecda;
+  --color-sand: #ede2c9;         /* banded sections */
+  --color-charcoal: #23241e;     /* body copy on cream */
+  --color-hairline: #e2d6b8;
+
+  --color-rust: #9c5a22;         /* ember accent, kept for the inner pages */
+
+  /* Page-shell geometry */
+  --shell-gap: clamp(6px, 1.15vw, 20px);
+  --shell-radius: clamp(16px, 2vw, 30px);
 }
 
 @theme inline {
   --color-ink: var(--color-ink);
   --color-ink-deep: var(--color-ink-deep);
+  --color-ink-soft: var(--color-ink-soft);
   --color-gold: var(--color-gold);
   --color-gold-bright: var(--color-gold-bright);
+  --color-brass: var(--color-brass);
+  --color-brass-deep: var(--color-brass-deep);
   --color-parchment: var(--color-parchment);
   --color-parchment-deep: var(--color-parchment-deep);
+  --color-sand: var(--color-sand);
   --color-rust: var(--color-rust);
   --color-charcoal: var(--color-charcoal);
   --color-hairline: var(--color-hairline);
   --color-hairline-dark: var(--color-hairline-dark);
 
-  --font-display: var(--font-fraunces);
-  --font-body: var(--font-inter);
-  --font-utility: var(--font-space-grotesk);
+  --font-display: var(--font-jost);
+  --font-body: var(--font-jost);
+  --font-utility: var(--font-jost);
+  --font-serif: var(--font-cormorant);
+  --font-script: var(--font-parisienne);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-ink);
 }
 
 body {
-  background: var(--color-parchment);
+  background: var(--color-ink);
   color: var(--color-charcoal);
   font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.005em;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
@@ -43,48 +76,187 @@ body {
   color: var(--color-ink);
 }
 
-/* Ledger rule — the recurring double-line divider motif used across sections */
-.ledger-rule {
-  position: relative;
-  height: 5px;
-}
-.ledger-rule::before,
-.ledger-rule::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
-}
-.ledger-rule::before {
-  top: 0;
-  background: currentColor;
-  opacity: 0.55;
-}
-.ledger-rule::after {
-  top: 4px;
-  background: currentColor;
-  opacity: 0.2;
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
-/* Page-enter — the cross-fade used by template.tsx on every route change */
+/* --------------------------------------------------------------------------
+   Page shell — the parchment card, with a hairline gold rule tracing it.
+   No overflow:hidden here, so sticky/fixed chrome still escapes it; only the
+   first and last children need to carry the rounded corners.
+   -------------------------------------------------------------------------- */
+.shell {
+  position: relative;
+  margin: var(--shell-gap);
+  border-radius: var(--shell-radius);
+  background: var(--color-parchment);
+  isolation: isolate;
+}
+.shell::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--shell-gap) * -0.42);
+  border: 1px solid color-mix(in srgb, var(--color-gold) 40%, transparent);
+  border-radius: calc(var(--shell-radius) + var(--shell-gap) * 0.42);
+  pointer-events: none;
+  z-index: 3;
+}
+.shell > :first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+.shell > :last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Type
+   -------------------------------------------------------------------------- */
+.script {
+  font-family: var(--font-script), "Brush Script MT", cursive;
+  font-weight: 400;
+  line-height: 1.15;
+  padding-block: 0.08em; /* the descenders on Parisienne run long */
+}
+
+.eyebrow {
+  font-family: var(--font-utility), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.headline {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.018em;
+  line-height: 1.08;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 999px;
+  padding: 0.85rem 1.9rem;
+  font-family: var(--font-utility), ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s,
+    box-shadow 0.3s;
+}
+.btn:hover { transform: translateY(-2px); }
+
+.btn-gold {
+  background: var(--color-gold);
+  color: var(--color-ink-deep);
+  box-shadow: 0 10px 24px -12px rgba(201, 161, 59, 0.9);
+}
+.btn-gold:hover { background: var(--color-gold-bright); }
+
+.btn-outline {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 65%, transparent);
+  color: var(--color-brass-deep);
+}
+.btn-outline:hover {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-ink-deep);
+}
+
+.btn-ondark {
+  border: 1px solid rgba(251, 247, 236, 0.55);
+  color: var(--color-parchment);
+}
+.btn-ondark:hover {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+}
+
+.btn-ink {
+  background: var(--color-ink);
+  color: var(--color-parchment);
+}
+.btn-ink:hover { background: var(--color-ink-soft); }
+
+/* --------------------------------------------------------------------------
+   Photo frames — the reference's soft "polaroid" mounts, in cream + gold.
+   -------------------------------------------------------------------------- */
+.frame {
+  padding: 5px;
+  border-radius: 18px;
+  background: var(--color-parchment);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-gold) 45%, transparent),
+    0 22px 45px -22px rgba(7, 22, 15, 0.55);
+}
+.frame > * { border-radius: 14px; }
+
+.frame-sand { background: var(--color-parchment-deep); }
+
+/* --------------------------------------------------------------------------
+   Decorative rules and grain
+   -------------------------------------------------------------------------- */
+.rule-gold {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-gold) 70%, transparent),
+    transparent
+  );
+}
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+}
+
+/* --------------------------------------------------------------------------
+   Motion
+   -------------------------------------------------------------------------- */
 @keyframes page-enter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 .animate-page-enter {
   animation: page-enter 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-html {
-  scroll-behavior: smooth;
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -14px, 0); }
 }
+.drift { animation: drift 9s ease-in-out infinite; }
+
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+.nudge { animation: nudge 2.2s ease-in-out infinite; }
+
+/* Hide scrollbars on the mobile photo rails without losing the scrolling. */
+.rail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.rail::-webkit-scrollbar { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
