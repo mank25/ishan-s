@@ -7,6 +7,9 @@ const repoName = "ishan-s";
 
 const nextConfig: NextConfig = {
   output: "export",
+  // Emit every route as `<route>/index.html`. Without this the export writes
+  // `contact.html`, which GitHub Pages serves at /contact but 404s at /contact/.
+  trailingSlash: true,
   images: {
     unoptimized: true,
     remotePatterns: [
