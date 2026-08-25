@@ -24,7 +24,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Must be a Node that ships npm 11.x: package-lock.json is written by
+          # npm 11 locally, and npm 10 (Node 20/22) resolves a different tree,
+          # which makes `npm ci` fail on missing @emnapi packages. Node 24 also
+          # satisfies the >=22.12 engine requirement of the Sanity toolchain.
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
