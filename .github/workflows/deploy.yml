@@ -32,7 +32,13 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        # `npm install`, not `npm ci`: the @emnapi/* wasm packages under sharp
+        # and tailwind's oxide binding are platform-gated optional deps, and npm
+        # cannot record a lockfile on macOS that satisfies `npm ci` on linux
+        # (it fails there on missing @emnapi/core, and locally on a mismatched
+        # @emnapi/wasi-threads). package-lock.json is still committed and still
+        # pins resolutions; install just tolerates the platform gap.
+        run: npm install --no-audit --no-fund
 
       - name: Build
         env:
